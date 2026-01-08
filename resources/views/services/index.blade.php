@@ -469,7 +469,7 @@
                             <a href="{{ route('services.show', 'security-guard') }}" class="service-link">
                                 Selengkapnya →
                             </a>
-                            <span class="service-price">Mulai dari Rp 3.5 Jt/bulan</span>
+                            {{-- <span class="service-price">Mulai dari Rp 3.5 Jt/bulan</span> --}}
                         </div>
                     </div>
                 </div>
@@ -496,7 +496,7 @@
                             <a href="{{ route('services.show', 'cleaning-service') }}" class="service-link">
                                 Selengkapnya →
                             </a>
-                            <span class="service-price">Mulai dari Rp 2.8 Jt/bulan</span>
+                            {{-- <span class="service-price">Mulai dari Rp 2.8 Jt/bulan</span> --}}
                         </div>
                     </div>
                 </div>
@@ -523,7 +523,7 @@
                             <a href="{{ route('services.show', 'driver-service') }}" class="service-link">
                                 Selengkapnya →
                             </a>
-                            <span class="service-price">Mulai dari Rp 3.2 Jt/bulan</span>
+                            {{-- <span class="service-price">Mulai dari Rp 3.2 Jt/bulan</span> --}}
                         </div>
                     </div>
                 </div>
@@ -550,7 +550,7 @@
                             <a href="{{ route('services.show', 'patrol-monitoring') }}" class="service-link">
                                 Selengkapnya →
                             </a>
-                            <span class="service-price">Hubungi kami</span>
+                            {{-- <span class="service-price">Hubungi kami</span> --}}
                         </div>
                     </div>
                 </div>
@@ -577,7 +577,7 @@
                             <a href="{{ route('services.show', 'cctv-system') }}" class="service-link">
                                 Selengkapnya →
                             </a>
-                            <span class="service-price">Custom package</span>
+                            {{-- <span class="service-price">Custom package</span> --}}
                         </div>
                     </div>
                 </div>
@@ -604,7 +604,7 @@
                             <a href="{{ route('services.show', 'security-consulting') }}" class="service-link">
                                 Selengkapnya →
                             </a>
-                            <span class="service-price">Project based</span>
+                            {{-- <span class="service-price">Project based</span> --}}
                         </div>
                     </div>
                 </div>
