@@ -176,35 +176,6 @@
             color: var(--gray-500);
         }
 
-        /* ========== FILE UPLOAD ========== */
-        .file-upload-area {
-            border: 2px dashed var(--gray-300);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--navy-primary);
-            background: var(--gray-50);
-        }
-
-        .file-upload-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .file-upload-text {
-            color: var(--gray-600);
-            margin-bottom: 0.5rem;
-        }
-
-        .file-input {
-            display: none;
-        }
-
         /* Logo Upload */
         .logo-upload {
             display: flex;
@@ -297,6 +268,7 @@
             padding: 1.5rem;
             text-align: center;
             transition: all 0.3s;
+            position: relative;
         }
 
         .cert-item:hover {
@@ -319,6 +291,34 @@
         .cert-item p {
             font-size: 0.85rem;
             color: var(--gray-600);
+        }
+
+        .cert-remove {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 30px;
+            height: 30px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .cert-item:hover .cert-remove {
+            opacity: 1;
+        }
+
+        .cert-remove:hover {
+            background: #dc2626;
+            transform: scale(1.1);
         }
 
         /* ========== SOCIAL MEDIA INPUTS ========== */
@@ -403,15 +403,9 @@
             background: #dc2626;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--navy-primary);
-            color: var(--navy-primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--navy-primary);
-            color: white;
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
         }
 
         /* ========== ALERT ========== */
@@ -492,6 +486,10 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .timeline-entry {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 @endpush
@@ -504,13 +502,11 @@
             <p class="page-subtitle">Kelola informasi dan konten profil perusahaan untuk halaman "Tentang Kami"</p>
         </div>
 
-        <!-- Success Alert -->
-        @if(session('success'))
-            <div class="alert alert-success">
-                <span>✓</span>
-                <span>{{ session('success') }}</span>
-            </div>
-        @endif
+        <!-- Success Alert (Hidden by default) -->
+        <div class="alert alert-success" style="display: none;" id="successAlert">
+            <span>✓</span>
+            <span>Data berhasil disimpan!</span>
+        </div>
 
         <!-- Tabs -->
         <div class="profile-tabs">
@@ -541,9 +537,7 @@
         </div>
 
         <!-- Tab Content -->
-        <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
+        <form action="#" method="POST" enctype="multipart/form-data" id="profileForm">
 
             <!-- Company Info Tab -->
             <div class="tab-content active" id="company-info">
@@ -559,42 +553,35 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label required">Nama Perusahaan</label>
-                            <input type="text" name="company_name" class="form-input"
-                                value="{{ old('company_name', $profile->company_name ?? 'PT. Bintara Mitra Andalan') }}"
+                            <input type="text" name="company_name" class="form-input" value="PT. Bintara Mitra Andalan"
                                 required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Tagline</label>
-                            <input type="text" name="tagline" class="form-input"
-                                value="{{ old('tagline', $profile->tagline ?? 'Solusi Alih Daya Terpercaya') }}"
+                            <input type="text" name="tagline" class="form-input" value="Solusi Alih Daya Terpercaya"
                                 placeholder="Slogan perusahaan">
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Tahun Berdiri</label>
-                            <input type="number" name="founded_year" class="form-input"
-                                value="{{ old('founded_year', $profile->founded_year ?? '2015') }}" min="1900" max="2100">
+                            <input type="number" name="founded_year" class="form-input" value="2015" min="1900" max="2100">
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Jumlah Personel Aktif</label>
-                            <input type="number" name="total_personnel" class="form-input"
-                                value="{{ old('total_personnel', $profile->total_personnel ?? '500') }}" min="0">
+                            <input type="number" name="total_personnel" class="form-input" value="500" min="0">
                         </div>
 
                         <div class="form-group full-width">
                             <label class="form-label">Logo Perusahaan</label>
                             <div class="logo-upload">
                                 <div class="logo-preview">
-                                    <img id="logoPreview"
-                                        src="{{ asset('storage/' . ($profile->logo ?? 'placeholder.png')) }}" alt="Logo"
-                                        style="display: {{ isset($profile->logo) ? 'block' : 'none' }}">
-                                    <span id="logoPlaceholder"
-                                        style="display: {{ isset($profile->logo) ? 'none' : 'block' }}; color: var(--gray-400); font-size: 3rem;">🏢</span>
+                                    <span id="logoPlaceholder" style="color: var(--gray-400); font-size: 3rem;">🏢</span>
                                 </div>
                                 <div>
-                                    <input type="file" id="logoInput" name="logo" class="file-input" accept="image/*">
+                                    <input type="file" id="logoInput" name="logo" class="file-input" accept="image/*"
+                                        style="display: none;">
                                     <button type="button" class="btn btn-primary"
                                         onclick="document.getElementById('logoInput').click()">
                                         📤 Upload Logo
@@ -607,7 +594,7 @@
                         <div class="form-group full-width">
                             <label class="form-label">Deskripsi Perusahaan</label>
                             <textarea name="short_description" class="form-textarea"
-                                rows="5">{{ old('short_description', $profile->short_description ?? 'PT. Bintara Mitra Andalan adalah perusahaan penyedia jasa outsourcing profesional yang telah berpengalaman lebih dari 10 tahun dalam industri alih daya tenaga kerja.') }}</textarea>
+                                rows="5">PT. Bintara Mitra Andalan adalah perusahaan penyedia jasa outsourcing profesional yang telah berpengalaman lebih dari 10 tahun dalam industri alih daya tenaga kerja.</textarea>
                             <span class="form-hint">Deskripsi ini akan ditampilkan di bagian intro halaman Tentang
                                 Kami</span>
                         </div>
@@ -626,34 +613,30 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label required">Nomor Telepon</label>
-                            <input type="tel" name="phone" class="form-input"
-                                value="{{ old('phone', $profile->phone ?? '+62 21 1234 5678') }}" required>
+                            <input type="tel" name="phone" class="form-input" value="+62 21 1234 5678" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label required">Email</label>
-                            <input type="email" name="email" class="form-input"
-                                value="{{ old('email', $profile->email ?? 'info@bima.co.id') }}" required>
+                            <input type="email" name="email" class="form-input" value="info@bima.co.id" required>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">WhatsApp</label>
-                            <input type="tel" name="whatsapp" class="form-input"
-                                value="{{ old('whatsapp', $profile->whatsapp ?? '+62 812 3456 7890') }}"
+                            <input type="tel" name="whatsapp" class="form-input" value="+62 812 3456 7890"
                                 placeholder="+62 xxx xxxx xxxx">
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">Website</label>
-                            <input type="url" name="website" class="form-input"
-                                value="{{ old('website', $profile->website ?? 'https://bima.co.id') }}"
+                            <input type="url" name="website" class="form-input" value="https://bima.co.id"
                                 placeholder="https://example.com">
                         </div>
 
                         <div class="form-group full-width">
                             <label class="form-label required">Alamat</label>
                             <textarea name="address" class="form-textarea"
-                                required>{{ old('address', $profile->address ?? 'Jl. Contoh No. 123, Jakarta Selatan 12345') }}</textarea>
+                                required>Jl. Contoh No. 123, Jakarta Selatan 12345</textarea>
                         </div>
                     </div>
                 </div>
@@ -672,8 +655,7 @@
                             <label class="form-label">Facebook</label>
                             <div class="social-input-group">
                                 <div class="social-icon">📘</div>
-                                <input type="url" name="social_facebook" class="form-input"
-                                    value="{{ old('social_facebook', $profile->social_facebook ?? '') }}"
+                                <input type="url" name="social_facebook" class="form-input" value=""
                                     placeholder="https://facebook.com/yourpage">
                             </div>
                         </div>
@@ -682,8 +664,7 @@
                             <label class="form-label">Instagram</label>
                             <div class="social-input-group">
                                 <div class="social-icon">📷</div>
-                                <input type="url" name="social_instagram" class="form-input"
-                                    value="{{ old('social_instagram', $profile->social_instagram ?? '') }}"
+                                <input type="url" name="social_instagram" class="form-input" value=""
                                     placeholder="https://instagram.com/yourpage">
                             </div>
                         </div>
@@ -692,8 +673,7 @@
                             <label class="form-label">LinkedIn</label>
                             <div class="social-input-group">
                                 <div class="social-icon">💼</div>
-                                <input type="url" name="social_linkedin" class="form-input"
-                                    value="{{ old('social_linkedin', $profile->social_linkedin ?? '') }}"
+                                <input type="url" name="social_linkedin" class="form-input" value=""
                                     placeholder="https://linkedin.com/company/yourcompany">
                             </div>
                         </div>
@@ -702,8 +682,7 @@
                             <label class="form-label">Twitter</label>
                             <div class="social-input-group">
                                 <div class="social-icon">🐦</div>
-                                <input type="url" name="social_twitter" class="form-input"
-                                    value="{{ old('social_twitter', $profile->social_twitter ?? '') }}"
+                                <input type="url" name="social_twitter" class="form-input" value=""
                                     placeholder="https://twitter.com/yourpage">
                             </div>
                         </div>
@@ -729,14 +708,14 @@
                     <div class="form-group">
                         <label class="form-label required">Visi Perusahaan</label>
                         <textarea name="vision" class="form-textarea" rows="6"
-                            required>{{ old('vision', $profile->vision ?? 'Menjadi perusahaan penyedia jasa outsourcing terkemuka di Indonesia yang dikenal dengan profesionalisme, integritas, dan kualitas layanan yang unggul, serta memberikan kontribusi positif bagi perkembangan industri keamanan dan layanan pendukung bisnis nasional.') }}</textarea>
+                            required>Menjadi perusahaan penyedia jasa outsourcing terkemuka di Indonesia yang dikenal dengan profesionalisme, integritas, dan kualitas layanan yang unggul, serta memberikan kontribusi positif bagi perkembangan industri keamanan dan layanan pendukung bisnis nasional.</textarea>
                         <span class="form-hint">Jelaskan tujuan jangka panjang perusahaan</span>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">Misi Perusahaan</label>
                         <textarea name="mission" class="form-textarea" rows="8"
-                            required>{{ old('mission', $profile->mission ?? 'Menyediakan solusi outsourcing berkualitas tinggi dengan personel terlatih dan tersertifikasi. Menerapkan sistem manajemen modern dan teknologi monitoring digital untuk transparansi dan efisiensi. Membangun kemitraan jangka panjang yang saling menguntungkan dengan klien dan memberikan kesempatan karir yang baik bagi personel.') }}</textarea>
+                            required>Menyediakan solusi outsourcing berkualitas tinggi dengan personel terlatih dan tersertifikasi. Menerapkan sistem manajemen modern dan teknologi monitoring digital untuk transparansi dan efisiensi. Membangun kemitraan jangka panjang yang saling menguntungkan dengan klien dan memberikan kesempatan karir yang baik bagi personel.</textarea>
                         <span class="form-hint">Jelaskan langkah-langkah untuk mencapai visi (bisa dalam bentuk
                             poin-poin)</span>
                     </div>
@@ -757,7 +736,6 @@
                     </div>
 
                     <div class="timeline-editor" id="timelineEditor">
-                        <!-- Example Timeline Entry -->
                         <div class="timeline-entry">
                             <div>
                                 <label class="form-label">Tahun</label>
@@ -766,14 +744,13 @@
                             </div>
                             <div>
                                 <label class="form-label">Judul Milestone</label>
-                                <input type="text" name="timeline_title[]" class="form-input" value="Pendirian Perusahaan"
-                                    placeholder="Contoh: Pendirian Perusahaan">
+                                <input type="text" name="timeline_title[]" class="form-input" value="Pendirian Perusahaan">
                                 <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                                 <textarea name="timeline_description[]" class="form-textarea"
                                     rows="3">PT. Bintara Mitra Andalan resmi didirikan dan mendapatkan legalitas lengkap dari pemerintah untuk beroperasi sebagai penyedia jasa outsourcing.</textarea>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-danger"
+                                <button type="button" class="btn btn-danger btn-sm"
                                     onclick="removeTimelineEntry(this)">🗑️</button>
                             </div>
                         </div>
@@ -793,7 +770,7 @@
                                     rows="3">Mendapatkan sertifikasi ISO 9001 untuk Sistem Manajemen Mutu, menandai komitmen kami terhadap standar internasional.</textarea>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-danger"
+                                <button type="button" class="btn btn-danger btn-sm"
                                     onclick="removeTimelineEntry(this)">🗑️</button>
                             </div>
                         </div>
@@ -812,7 +789,7 @@
                                     rows="3">Terus berinovasi dengan teknologi terkini dan memperluas layanan untuk memenuhi kebutuhan bisnis yang semakin kompleks.</textarea>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-danger"
+                                <button type="button" class="btn btn-danger btn-sm"
                                     onclick="removeTimelineEntry(this)">🗑️</button>
                             </div>
                         </div>
@@ -841,8 +818,8 @@
                                 <p>Direktur Utama</p>
                             </div>
                             <div class="team-actions">
-                                <button type="button" class="btn btn-secondary">✏️ Edit</button>
-                                <button type="button" class="btn btn-danger">🗑️</button>
+                                <button type="button" class="btn btn-secondary btn-sm">✏️ Edit</button>
+                                <button type="button" class="btn btn-danger btn-sm">🗑️</button>
                             </div>
                         </div>
 
@@ -853,8 +830,8 @@
                                 <p>Operations Manager</p>
                             </div>
                             <div class="team-actions">
-                                <button type="button" class="btn btn-secondary">✏️ Edit</button>
-                                <button type="button" class="btn btn-danger">🗑️</button>
+                                <button type="button" class="btn btn-secondary btn-sm">✏️ Edit</button>
+                                <button type="button" class="btn btn-danger btn-sm">🗑️</button>
                             </div>
                         </div>
 
@@ -865,8 +842,8 @@
                                 <p>HR Manager</p>
                             </div>
                             <div class="team-actions">
-                                <button type="button" class="btn btn-secondary">✏️ Edit</button>
-                                <button type="button" class="btn btn-danger">🗑️</button>
+                                <button type="button" class="btn btn-secondary btn-sm">✏️ Edit</button>
+                                <button type="button" class="btn btn-danger btn-sm">🗑️</button>
                             </div>
                         </div>
                     </div>
@@ -893,67 +870,59 @@
 
                     <div class="cert-grid" id="certGrid">
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">📜</div>
                             <h4>Akta Pendirian</h4>
                             <p>SK Kemenkumham</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
 
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">🏢</div>
                             <h4>NIB</h4>
                             <p>Berbasis Resiko</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
 
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">🎖️</div>
                             <h4>KTA ABUJAPI</h4>
                             <p>Anggota Resmi</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
 
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">✅</div>
                             <h4>ISO 9001</h4>
                             <p>Manajemen Mutu</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
 
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">⚡</div>
                             <h4>ISO 45001</h4>
                             <p>Manajemen K3</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
 
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">🌱</div>
                             <h4>ISO 14001</h4>
                             <p>Manajemen Lingkungan</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
 
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">🚔</div>
                             <h4>SIO Polda Jateng</h4>
                             <p>Surat Izin Operasional</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
 
                         <div class="cert-item">
+                            <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                             <div class="cert-icon">🚔</div>
                             <h4>SIO Polda Jatim</h4>
                             <p>Surat Izin Operasional</p>
-                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;">🗑️
-                                Hapus</button>
                         </div>
                     </div>
                 </div>
@@ -987,8 +956,8 @@
                             <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                             <textarea name="value_description[]" class="form-textarea"
                                 rows="3">Berkomitmen untuk selalu jujur, transparan, dan bertanggung jawab dalam setiap aspek bisnis kami.</textarea>
-                            <button type="button" class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;">🗑️
-                                Hapus</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 0.5rem; width: 100%;"
+                                onclick="removeValue(this)">🗑️ Hapus</button>
                         </div>
 
                         <div class="form-group">
@@ -1000,8 +969,8 @@
                             <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                             <textarea name="value_description[]" class="form-textarea"
                                 rows="3">Memberikan layanan berkualitas tinggi dengan standar profesional dan keunggulan operasional.</textarea>
-                            <button type="button" class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;">🗑️
-                                Hapus</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 0.5rem; width: 100%;"
+                                onclick="removeValue(this)">🗑️ Hapus</button>
                         </div>
 
                         <div class="form-group">
@@ -1013,8 +982,8 @@
                             <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                             <textarea name="value_description[]" class="form-textarea"
                                 rows="3">Membangun hubungan jangka panjang yang saling menguntungkan dengan klien dan stakeholder.</textarea>
-                            <button type="button" class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;">🗑️
-                                Hapus</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 0.5rem; width: 100%;"
+                                onclick="removeValue(this)">🗑️ Hapus</button>
                         </div>
 
                         <div class="form-group">
@@ -1026,8 +995,8 @@
                             <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                             <textarea name="value_description[]" class="form-textarea"
                                 rows="3">Terus berinovasi dan beradaptasi dengan teknologi terkini untuk meningkatkan kualitas layanan.</textarea>
-                            <button type="button" class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;">🗑️
-                                Hapus</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 0.5rem; width: 100%;"
+                                onclick="removeValue(this)">🗑️ Hapus</button>
                         </div>
 
                         <div class="form-group">
@@ -1039,8 +1008,8 @@
                             <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                             <textarea name="value_description[]" class="form-textarea"
                                 rows="3">Berkomitmen penuh terhadap kepuasan klien dan kesejahteraan personel kami.</textarea>
-                            <button type="button" class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;">🗑️
-                                Hapus</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 0.5rem; width: 100%;"
+                                onclick="removeValue(this)">🗑️ Hapus</button>
                         </div>
 
                         <div class="form-group">
@@ -1052,8 +1021,8 @@
                             <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                             <textarea name="value_description[]" class="form-textarea"
                                 rows="3">Mengutamakan keselamatan dan keamanan dalam setiap operasional dan layanan yang kami berikan.</textarea>
-                            <button type="button" class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;">🗑️
-                                Hapus</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 0.5rem; width: 100%;"
+                                onclick="removeValue(this)">🗑️ Hapus</button>
                         </div>
                     </div>
                 </div>
@@ -1061,8 +1030,7 @@
 
             <!-- Form Actions -->
             <div class="form-actions">
-                <button type="button" class="btn btn-secondary"
-                    onclick="window.location.href='{{ route('admin.dashboard') }}'">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='#'">
                     ← Batal
                 </button>
                 <button type="submit" class="btn btn-success">
@@ -1096,7 +1064,6 @@
 
             // Logo Preview
             const logoInput = document.getElementById('logoInput');
-            const logoPreview = document.getElementById('logoPreview');
             const logoPlaceholder = document.getElementById('logoPlaceholder');
 
             logoInput?.addEventListener('change', function (e) {
@@ -1104,12 +1071,27 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        logoPreview.src = e.target.result;
-                        logoPreview.style.display = 'block';
-                        logoPlaceholder.style.display = 'none';
+                        logoPlaceholder.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: contain;">`;
                     };
                     reader.readAsDataURL(file);
                 }
+            });
+
+            // Form Submit
+            document.getElementById('profileForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Show success alert
+                const alert = document.getElementById('successAlert');
+                alert.style.display = 'flex';
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Hide alert after 3 seconds
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 3000);
             });
         });
 
@@ -1130,7 +1112,7 @@
                         <textarea name="timeline_description[]" class="form-textarea" rows="3" placeholder="Deskripsi milestone..."></textarea>
                     </div>
                     <div>
-                        <button type="button" class="btn btn-danger" onclick="removeTimelineEntry(this)">🗑️</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeTimelineEntry(this)">🗑️</button>
                     </div>
                 `;
             timeline.appendChild(newEntry);
@@ -1168,10 +1150,10 @@
                 const newCert = document.createElement('div');
                 newCert.className = 'cert-item';
                 newCert.innerHTML = `
+                        <button type="button" class="cert-remove" onclick="removeCert(this)">×</button>
                         <div class="cert-icon">${icon}</div>
                         <h4>${title}</h4>
                         <p>${desc || '-'}</p>
-                        <button type="button" class="btn btn-danger btn-sm" style="margin-top: 1rem; width: 100%;" onclick="removeCert(this)">🗑️ Hapus</button>
                     `;
                 certGrid.appendChild(newCert);
 
@@ -1210,7 +1192,7 @@
                     <input type="text" name="value_title[]" class="form-input" placeholder="Contoh: Integritas">
                     <label class="form-label" style="margin-top: 1rem;">Deskripsi</label>
                     <textarea name="value_description[]" class="form-textarea" rows="3" placeholder="Deskripsi nilai..."></textarea>
-                    <button type="button" class="btn btn-danger" style="margin-top: 0.5rem; width: 100%;" onclick="removeValue(this)">🗑️ Hapus</button>
+                    <button type="button" class="btn btn-danger btn-sm" style="margin-top: 0.5rem; width: 100%;" onclick="removeValue(this)">🗑️ Hapus</button>
                 `;
             valuesGrid.appendChild(newValue);
 
@@ -1239,27 +1221,6 @@
         // Open Team Modal (placeholder)
         function openTeamModal() {
             alert('Fitur tambah anggota tim akan membuka modal form.\n\nForm akan berisi:\n- Nama\n- Posisi\n- Upload Foto\n- Email\n- LinkedIn URL');
-            // You can implement actual modal here
         }
-
-        // Confirm before leaving if form has changes
-        let formChanged = false;
-        document.querySelectorAll('input, textarea, select').forEach(el => {
-            el.addEventListener('change', () => {
-                formChanged = true;
-            });
-        });
-
-        window.addEventListener('beforeunload', (e) => {
-            if (formChanged) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
-        // Reset formChanged on submit
-        document.querySelector('form')?.addEventListener('submit', () => {
-            formChanged = false;
-        });
     </script>
 @endpush
