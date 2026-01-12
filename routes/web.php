@@ -43,14 +43,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         ->name('services.toggle');
 
     // Clients Management
-    Route::resource('clients', ClientController::class);
-    Route::post('clients/{client}/toggle', [ClientController::class, 'toggleStatus'])
-        ->name('clients.toggle');
+    // Route::resource('clients', ClientController::class);
+    // Route::post('clients/{client}/toggle', [ClientController::class, 'toggleStatus'])
+    //     ->name('clients.toggle');
 
     // Hero Slides Management
-    Route::resource('hero-slides', HeroSlideController::class);
-    Route::post('hero-slides/{heroSlide}/toggle', [HeroSlideController::class, 'toggleStatus'])
-        ->name('hero-slides.toggle');
+    // Route::resource('hero-slides', HeroSlideController::class);
+    // Route::post('hero-slides/{heroSlide}/toggle', [HeroSlideController::class, 'toggleStatus'])
+    //     ->name('hero-slides.toggle');
 
     // Contacts Management
     Route::get('contacts', [AdminContactController::class, 'index'])->name('contacts.index');
@@ -60,7 +60,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('contacts/bulk-delete', [AdminContactController::class, 'bulkDelete'])->name('contacts.bulkDelete');
 
     // Job Applications Management
-    Route::resource('job-applications', JobApplicationController::class)->only(['index', 'show', 'destroy']);
-    Route::patch('job-applications/{jobApplication}/status', [JobApplicationController::class, 'updateStatus'])
-        ->name('job-applications.updateStatus');
+    // Route::resource('job-applications', JobApplicationController::class)->only(['index', 'show', 'destroy']);
+    // Route::patch('job-applications/{jobApplication}/status', [JobApplicationController::class, 'updateStatus'])
+    //     ->name('job-applications.updateStatus');
 });
