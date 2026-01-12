@@ -428,268 +428,138 @@
 @endpush
 
 @section('content')
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="page-header-content">
-            <div class="breadcrumb">
-                <a href="{{ route('home') }}">Beranda</a>
-                <span>/</span>
-                <span>Layanan</span>
+<!-- Page Header -->
+<section class="page-header">
+    <div class="page-header-content">
+        <div class="breadcrumb">
+            <a href="{{ route('home') }}">Beranda</a>
+            <span>/</span>
+            <span>Layanan</span>
+        </div>
+        <h1 class="page-title">Layanan Kami</h1>
+        <p class="page-subtitle">
+            Solusi outsourcing profesional untuk berbagai kebutuhan bisnis Anda
+        </p>
+    </div>
+</section>
+
+<!-- Services Grid -->
+<section class="services-section">
+    <div class="services-container">
+        <div class="services-grid">
+            @forelse($services as $service)
+            <div class="service-card-large">
+                <div class="service-image">{{ $service->icon }}</div>
+                <div class="service-content">
+                    <div class="service-header">
+                        <span class="service-category">{{ $service->category }}</span>
+                        <h3 class="service-title">{{ $service->title }}</h3>
+                        <p class="service-description">
+                            {{ $service->description }}
+                        </p>
+                    </div>
+                    
+                    @if($service->features && count($service->features) > 0)
+                    <ul class="service-features">
+                        @foreach($service->features as $feature)
+                        <li>{{ $feature }}</li>
+                        @endforeach
+                    </ul>
+                    @endif
+                    
+                    <div class="service-footer">
+                        <a href="{{ route('services.show', $service->slug) }}" class="service-link">
+                            Selengkapnya →
+                        </a>
+                        <span class="service-price">{{ $service->price_label ?? 'Hubungi kami' }}</span>
+                    </div>
+                </div>
             </div>
-            <h1 class="page-title">Layanan Kami</h1>
-            <p class="page-subtitle">
-                Solusi outsourcing profesional untuk berbagai kebutuhan bisnis Anda
+            @empty
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">Belum ada layanan tersedia.</p>
+            </div>
+            @endforelse
+        </div>
+    </div>
+</section>
+
+<!-- Methodology Section -->
+<section class="methodology-section">
+    <div class="methodology-container">
+        <div class="section-header">
+            <div class="section-badge">METODOLOGI KAMI</div>
+            <h2 class="section-title">Proses Pengelolaan SDM</h2>
+            <p class="section-description">
+                Sistem manajemen terintegrasi untuk memastikan kualitas layanan terbaik
             </p>
         </div>
-    </section>
-
-    <!-- Services Grid -->
-    <section class="services-section">
-        <div class="services-container">
-            <div class="services-grid">
-                <!-- Service 1: Security Guard -->
-                <div class="service-card-large">
-                    <div class="service-image">🛡️</div>
-                    <div class="service-content">
-                        <div class="service-header">
-                            <span class="service-category">Security</span>
-                            <h3 class="service-title">Security Guard Service</h3>
-                            <p class="service-description">
-                                Personel security bersertifikat Gada Pratama dengan pelatihan 6 tahap seleksi untuk menjaga
-                                keamanan aset dan lingkungan bisnis Anda.
-                            </p>
-                        </div>
-                        <ul class="service-features">
-                            <li>Personel Tersertifikasi Gada Pratama</li>
-                            <li>6 Tahap Seleksi Ketat</li>
-                            <li>Monitoring 24/7 dengan Aplikasi</li>
-                            <li>Laporan Digital Real-time</li>
-                        </ul>
-                        <div class="service-footer">
-                            <a href="{{ route('services.show', 'security-guard') }}" class="service-link">
-                                Selengkapnya →
-                            </a>
-                            {{-- <span class="service-price">Mulai dari Rp 3.5 Jt/bulan</span> --}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Service 2: Cleaning Service -->
-                <div class="service-card-large">
-                    <div class="service-image">🧹</div>
-                    <div class="service-content">
-                        <div class="service-header">
-                            <span class="service-category">Cleaning</span>
-                            <h3 class="service-title">Cleaning Service</h3>
-                            <p class="service-description">
-                                Layanan kebersihan profesional dengan peralatan modern dan metode yang efektif untuk menjaga
-                                lingkungan kerja tetap bersih dan nyaman.
-                            </p>
-                        </div>
-                        <ul class="service-features">
-                            <li>Peralatan Modern & Lengkap</li>
-                            <li>Produk Ramah Lingkungan</li>
-                            <li>Jadwal Fleksibel</li>
-                            <li>Supervisor Berpengalaman</li>
-                        </ul>
-                        <div class="service-footer">
-                            <a href="{{ route('services.show', 'cleaning-service') }}" class="service-link">
-                                Selengkapnya →
-                            </a>
-                            {{-- <span class="service-price">Mulai dari Rp 2.8 Jt/bulan</span> --}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Service 3: Driver Service -->
-                <div class="service-card-large">
-                    <div class="service-image">🚗</div>
-                    <div class="service-content">
-                        <div class="service-header">
-                            <span class="service-category">Transportation</span>
-                            <h3 class="service-title">Driver Service</h3>
-                            <p class="service-description">
-                                Driver profesional dengan SIM yang valid dan pengalaman mengemudi untuk mendukung mobilitas
-                                operasional perusahaan Anda.
-                            </p>
-                        </div>
-                        <ul class="service-features">
-                            <li>SIM Valid & Berpengalaman</li>
-                            <li>Pengetahuan Rute Lengkap</li>
-                            <li>Kendaraan Terawat</li>
-                            <li>Fleksibel & Disiplin</li>
-                        </ul>
-                        <div class="service-footer">
-                            <a href="{{ route('services.show', 'driver-service') }}" class="service-link">
-                                Selengkapnya →
-                            </a>
-                            {{-- <span class="service-price">Mulai dari Rp 3.2 Jt/bulan</span> --}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Service 4: Patrol & Monitoring -->
-                <div class="service-card-large">
-                    <div class="service-image">🗺️</div>
-                    <div class="service-content">
-                        <div class="service-header">
-                            <span class="service-category">Monitoring</span>
-                            <h3 class="service-title">Patrol & Monitoring</h3>
-                            <p class="service-description">
-                                Sistem patroli dengan monitoring digital 24/7 dan laporan real-time untuk pengawasan yang
-                                lebih efektif dan terukur.
-                            </p>
-                        </div>
-                        <ul class="service-features">
-                            <li>Aplikasi Turjawali Patrol</li>
-                            <li>GPS Tracking Real-time</li>
-                            <li>Laporan Digital Otomatis</li>
-                            <li>Mobile Command Center</li>
-                        </ul>
-                        <div class="service-footer">
-                            <a href="{{ route('services.show', 'patrol-monitoring') }}" class="service-link">
-                                Selengkapnya →
-                            </a>
-                            {{-- <span class="service-price">Hubungi kami</span> --}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Service 5: CCTV System -->
-                <div class="service-card-large">
-                    <div class="service-image">📹</div>
-                    <div class="service-content">
-                        <div class="service-header">
-                            <span class="service-category">Technology</span>
-                            <h3 class="service-title">CCTV & Security System</h3>
-                            <p class="service-description">
-                                Instalasi dan pemeliharaan sistem CCTV serta security system terintegrasi untuk perlindungan
-                                maksimal dan monitoring efektif.
-                            </p>
-                        </div>
-                        <ul class="service-features">
-                            <li>CCTV HD & IP Camera</li>
-                            <li>Remote Viewing 24/7</li>
-                            <li>Recording & Backup</li>
-                            <li>Maintenance Berkala</li>
-                        </ul>
-                        <div class="service-footer">
-                            <a href="{{ route('services.show', 'cctv-system') }}" class="service-link">
-                                Selengkapnya →
-                            </a>
-                            {{-- <span class="service-price">Custom package</span> --}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Service 6: Security Consulting -->
-                <div class="service-card-large">
-                    <div class="service-image">💼</div>
-                    <div class="service-content">
-                        <div class="service-header">
-                            <span class="service-category">Consulting</span>
-                            <h3 class="service-title">Security Consulting</h3>
-                            <p class="service-description">
-                                Konsultasi dan perencanaan sistem keamanan sesuai analisis risiko dan kebutuhan spesifik
-                                bisnis Anda.
-                            </p>
-                        </div>
-                        <ul class="service-features">
-                            <li>Risk Assessment</li>
-                            <li>Security Planning</li>
-                            <li>SOP Development</li>
-                            <li>Training & Audit</li>
-                        </ul>
-                        <div class="service-footer">
-                            <a href="{{ route('services.show', 'security-consulting') }}" class="service-link">
-                                Selengkapnya →
-                            </a>
-                            {{-- <span class="service-price">Project based</span> --}}
-                        </div>
-                    </div>
-                </div>
+        <div class="methodology-steps">
+            <div class="method-step">
+                <div class="method-number">1</div>
+                <h4>Recruitment</h4>
+                <p>Seleksi ketat 6 tahap untuk mendapatkan kandidat terbaik dengan kualifikasi sesuai standar.</p>
+            </div>
+            <div class="method-step">
+                <div class="method-number">2</div>
+                <h4>Training</h4>
+                <p>Pelatihan intensif mencakup technical skill, soft skill, dan product knowledge client.</p>
+            </div>
+            <div class="method-step">
+                <div class="method-number">3</div>
+                <h4>Placement</h4>
+                <p>Penempatan personel sesuai kebutuhan dengan pembekalan SOP dan KAK yang jelas.</p>
+            </div>
+            <div class="method-step">
+                <div class="method-number">4</div>
+                <h4>Monitoring</h4>
+                <p>Pengawasan berkelanjutan dengan sistem digital dan pembinaan rutin untuk kualitas konsisten.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Methodology Section -->
-    <section class="methodology-section">
-        <div class="methodology-container">
-            <div class="section-header">
-                <div class="section-badge">METODOLOGI KAMI</div>
-                <h2 class="section-title">Proses Pengelolaan SDM</h2>
-                <p class="section-description">
-                    Sistem manajemen terintegrasi untuk memastikan kualitas layanan terbaik
-                </p>
-            </div>
-            <div class="methodology-steps">
-                <div class="method-step">
-                    <div class="method-number">1</div>
-                    <h4>Recruitment</h4>
-                    <p>Seleksi ketat 6 tahap untuk mendapatkan kandidat terbaik dengan kualifikasi sesuai standar.</p>
-                </div>
-                <div class="method-step">
-                    <div class="method-number">2</div>
-                    <h4>Training</h4>
-                    <p>Pelatihan intensif mencakup technical skill, soft skill, dan product knowledge client.</p>
-                </div>
-                <div class="method-step">
-                    <div class="method-number">3</div>
-                    <h4>Placement</h4>
-                    <p>Penempatan personel sesuai kebutuhan dengan pembekalan SOP dan KAK yang jelas.</p>
-                </div>
-                <div class="method-step">
-                    <div class="method-number">4</div>
-                    <h4>Monitoring</h4>
-                    <p>Pengawasan berkelanjutan dengan sistem digital dan pembinaan rutin untuk kualitas konsisten.</p>
-                </div>
-            </div>
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-container">
+        <h2>Butuh Konsultasi Layanan?</h2>
+        <p>Tim kami siap membantu Anda menemukan solusi outsourcing yang tepat untuk bisnis Anda</p>
+        <div class="cta-buttons">
+            <a href="{{ route('contact') }}" class="btn btn-accent">
+                📋 Ajukan Penawaran
+            </a>
+            <a href="https://wa.me/62xxx" class="btn btn-primary" target="_blank">
+                💬 Chat WhatsApp
+            </a>
         </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="cta-container">
-            <h2>Butuh Konsultasi Layanan?</h2>
-            <p>Tim kami siap membantu Anda menemukan solusi outsourcing yang tepat untuk bisnis Anda</p>
-            <div class="cta-buttons">
-                <a href="{{ route('contact') }}" class="btn btn-accent">
-                    📋 Ajukan Penawaran
-                </a>
-                <a href="https://wa.me/62xxx" class="btn btn-primary" target="_blank">
-                    💬 Chat WhatsApp
-                </a>
-            </div>
-        </div>
-    </section>
+    </div>
+</section>
 @endsection
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Intersection Observer
-            const observerOptions = {
-                threshold: 0.2,
-                rootMargin: '0px 0px -50px 0px'
-            };
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            // Observe elements
-            document.querySelectorAll('.service-card-large, .method-step').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'all 0.6s ease';
-                observer.observe(el);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target);
+                }
             });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card-large, .method-step').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
         });
-    </script>
+    });
+</script>
 @endpush
