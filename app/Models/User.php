@@ -11,6 +11,11 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'email',
@@ -22,31 +27,56 @@ class User extends Authenticatable
         'last_login_at',
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'last_login_at' => 'datetime',
-        'is_active' => 'boolean',
-        'password' => 'hashed',
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'is_active' => 'boolean',
+            'password' => 'hashed', // Laravel 12 automatic password hashing
+        ];
+    }
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
     protected $appends = ['avatar_url', 'initials'];
 
-    public function getAvatarUrlAttribute()
+    /**
+     * Get the avatar URL attribute.
+     */
+    public function getAvatarUrlAttribute(): string
     {
         if ($this->avatar) {
             return Storage::url($this->avatar);
         }
-        
+
         // Generate default avatar URL using UI Avatars
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=0A1F44&color=fff&size=200';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name)
+               . '&background=0A1F44&color=fff&size=200&bold=true';
     }
 
-    public function getInitialsAttribute()
+    /**
+     * Get the user's initials.
+     */
+    public function getInitialsAttribute(): string
     {
         $words = explode(' ', $this->name);
         if (count($words) >= 2) {
@@ -55,27 +85,42 @@ class User extends Authenticatable
         return strtoupper(substr($this->name, 0, 2));
     }
 
+    /**
+     * Check if user is admin.
+     */
     public function isAdmin(): bool
     {
         return in_array($this->role, ['admin', 'super_admin']);
     }
 
+    /**
+     * Check if user is super admin.
+     */
     public function isSuperAdmin(): bool
     {
         return $this->role === 'super_admin';
     }
 
+    /**
+     * Scope a query to only include active users.
+     */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }
 
+    /**
+     * Scope a query to only include admin users.
+     */
     public function scopeAdmins($query)
     {
         return $query->whereIn('role', ['admin', 'super_admin']);
     }
 
-    public function updateLastLogin()
+    /**
+     * Update user's last login timestamp.
+     */
+    public function updateLastLogin(): void
     {
         $this->update(['last_login_at' => now()]);
     }

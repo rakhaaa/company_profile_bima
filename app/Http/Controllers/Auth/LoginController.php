@@ -3,22 +3,30 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
+    /**
+     * Display the login form.
+     */
+    public function showLoginForm(): View|RedirectResponse
     {
         if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
-        
+
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    /**
+     * Handle login request.
+     */
+    public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -29,11 +37,11 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            
+
             // Update last login
             Auth::user()->updateLastLogin();
 
-            // Redirect based on role
+            // Check if user is admin
             if (Auth::user()->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'))
                     ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
@@ -41,6 +49,7 @@ class LoginController extends Controller
 
             // If not admin, logout and show error
             Auth::logout();
+
             throw ValidationException::withMessages([
                 'email' => 'Akun Anda tidak memiliki akses ke panel admin.',
             ]);
@@ -51,7 +60,10 @@ class LoginController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    /**
+     * Handle logout request.
+     */
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
 

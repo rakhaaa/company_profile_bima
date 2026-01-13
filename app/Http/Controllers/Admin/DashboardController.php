@@ -8,11 +8,15 @@ use App\Models\Client;
 use App\Models\ContactSubmission;
 use App\Models\Service;
 use App\Models\HeroSlide;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    /**
+     * Display the admin dashboard.
+     */
+    public function index(): View
     {
         // Statistics Cards
         $stats = [
