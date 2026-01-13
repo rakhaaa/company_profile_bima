@@ -12,30 +12,18 @@ class Service extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
+        'icon',
         'title',
         'slug',
-        'icon',
         'description',
         'full_description',
-        'image',
         'order',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'order' => 'integer',
     ];
-
-    /**
-     * Indicates if the model's ID is auto-incrementing.
-     */
-    public $incrementing = false;
-
-    /**
-     * The data type of the auto-incrementing ID.
-     */
-    protected $keyType = 'string';
 
     protected static function boot()
     {
@@ -61,6 +49,6 @@ class Service extends Model
 
     public function scopeOrdered($query)
     {
-        return $query->orderBy('order', 'asc');
+        return $query->orderBy('order')->orderBy('created_at');
     }
 }

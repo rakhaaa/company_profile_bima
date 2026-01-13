@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Client extends Model
 {
@@ -13,25 +14,20 @@ class Client extends Model
     protected $fillable = [
         'name',
         'logo',
-        'website',
         'order',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'order' => 'integer',
     ];
 
-    /**
-     * Indicates if the model's ID is auto-incrementing.
-     */
-    public $incrementing = false;
+    protected $appends = ['logo_url'];
 
-    /**
-     * The data type of the auto-incrementing ID.
-     */
-    protected $keyType = 'string';
+    public function getLogoUrlAttribute()
+    {
+        return $this->logo ? Storage::url($this->logo) : null;
+    }
 
     public function scopeActive($query)
     {
@@ -40,6 +36,6 @@ class Client extends Model
 
     public function scopeOrdered($query)
     {
-        return $query->orderBy('order', 'asc');
+        return $query->orderBy('order')->orderBy('created_at');
     }
 }

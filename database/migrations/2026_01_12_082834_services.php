@@ -8,29 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->string('category')->nullable()->after('icon'); // security, cleaning, transportation, etc
-            $table->json('features')->nullable()->after('full_description'); // Array of features
-            $table->string('price_label')->nullable()->after('features'); // "Mulai dari Rp 3.5 Jt/bulan"
-            $table->decimal('price_start', 15, 2)->nullable()->after('price_label'); // Starting price
-            $table->json('benefits')->nullable()->after('price_start'); // Additional benefits
-            $table->json('requirements')->nullable()->after('benefits'); // Service requirements
-            $table->text('process_description')->nullable()->after('requirements'); // How it works
+        Schema::create('services', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('icon')->nullable(); // emoji atau path icon
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->text('full_description')->nullable();
+            $table->integer('order')->default(0);
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->dropColumn([
-                'category',
-                'features',
-                'price_label',
-                'price_start',
-                'benefits',
-                'requirements',
-                'process_description'
-            ]);
-        });
+        Schema::dropIfExists('services');
     }
 };

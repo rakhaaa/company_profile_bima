@@ -5,24 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
-class HeroSlide extends Model
+class WhyFeature extends Model
 {
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'badge_icon',
-        'badge_text',
+        'icon',
         'title',
-        'highlight_text',
         'description',
-        'background_image',
-        'background_color',
-        'primary_button_text',
-        'primary_button_link',
-        'secondary_button_text',
-        'secondary_button_link',
         'order',
         'is_active',
     ];
@@ -30,13 +21,6 @@ class HeroSlide extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
-    protected $appends = ['background_image_url'];
-
-    public function getBackgroundImageUrlAttribute()
-    {
-        return $this->background_image ? Storage::url($this->background_image) : null;
-    }
 
     public function scopeActive($query)
     {

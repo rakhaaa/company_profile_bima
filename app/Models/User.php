@@ -2,20 +2,24 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
+    use HasFactory, Notifiable;
+
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
+        'phone',
         'avatar',
+        'role',
         'is_active',
+        'last_login_at',
     ];
 
     protected $hidden = [
@@ -25,22 +29,42 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'last_login_at' => 'datetime',
         'is_active' => 'boolean',
+        'password' => 'hashed',
     ];
 
-    // Relationships
-    public function blogPosts()
+    protected $appends = ['avatar_url', 'initials'];
+
+    public function getAvatarUrlAttribute()
     {
-        return $this->hasMany(BlogPost::class, 'author_id');
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
+        }
+        
+        // Generate default avatar URL using UI Avatars
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=0A1F44&color=fff&size=200';
     }
 
-    public function media()
+    public function getInitialsAttribute()
     {
-        return $this->hasMany(Media::class);
+        $words = explode(' ', $this->name);
+        if (count($words) >= 2) {
+            return strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+        }
+        return strtoupper(substr($this->name, 0, 2));
     }
 
-    // Scopes
+    public function isAdmin(): bool
+    {
+        return in_array($this->role, ['admin', 'super_admin']);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
@@ -48,12 +72,11 @@ class User extends Authenticatable
 
     public function scopeAdmins($query)
     {
-        return $query->where('role', 'admin');
+        return $query->whereIn('role', ['admin', 'super_admin']);
     }
 
-    // Helpers
-    public function isAdmin()
+    public function updateLastLogin()
     {
-        return $this->role === 'admin';
+        $this->update(['last_login_at' => now()]);
     }
 }

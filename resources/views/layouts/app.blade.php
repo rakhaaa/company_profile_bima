@@ -581,8 +581,8 @@
                         class="{{ request()->routeIs('portfolio') ? 'active' : '' }}">Portfolio</a></li>
                 <li><a href="{{ route('career') }}"
                         class="{{ request()->routeIs('career*') ? 'active' : '' }}">Karir</a></li>
-                <li><a href="{{ route('blog') }}" class="{{ request()->routeIs('blog*') ? 'active' : '' }}">Blog</a>
-                </li>
+                {{-- <li><a href="{{ route('blog') }}" class="{{ request()->routeIs('blog*') ? 'active' : '' }}">Blog</a>
+                </li> --}}
                 <li><a href="{{ route('contact') }}"
                         class="{{ request()->routeIs('contact') ? 'active' : '' }}">Kontak</a></li>
 
@@ -632,7 +632,7 @@
                     <a href="{{ route('services') }}">Layanan</a>
                     <a href="{{ route('portfolio') }}">Portfolio</a>
                     <a href="{{ route('career') }}">Karir</a>
-                    <a href="{{ route('blog') }}">Blog</a>
+                    {{-- <a href="{{ route('blog') }}">Blog</a> --}}
                 </div>
 
                 <div class="footer-col">

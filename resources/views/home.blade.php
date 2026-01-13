@@ -648,114 +648,56 @@
 @section('content')
     <!-- Hero Slider -->
     <section class="hero-slider">
-        <div class="hero-slide active"
-            style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1920 1080%27%3E%3Crect fill=%27%230A1F44%27 width=%271920%27 height=%271080%27/%3E%3C/svg%3E');">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span>🏆</span>
-                    <span>ISO Certified & Trusted by 200+ Companies</span>
-                </div>
-                <h1 class="hero-title">
-                    Solusi Alih Daya<br>
-                    <span class="hero-highlight">Terpercaya & Terlatih</span>
-                </h1>
-                <p class="hero-description">
-                    Menyediakan personel profesional dengan sertifikasi lengkap untuk kebutuhan security, cleaning, dan
-                    driver perusahaan Anda.
-                </p>
-                <div class="hero-actions">
-                    <a href="{{ route('contact') }}" class="btn btn-accent">
-                        📋 Ajukan Penawaran
-                    </a>
-                    <a href="{{ route('career') }}" class="btn btn-primary">
-                        💼 Cari Lowongan Kerja
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="hero-slide"
-            style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1920 1080%27%3E%3Crect fill=%27%231E3A5F%27 width=%271920%27 height=%271080%27/%3E%3C/svg%3E');">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span>🛡️</span>
-                    <span>24/7 Monitoring & Professional Team</span>
-                </div>
-                <h1 class="hero-title">
-                    Personel Tersertifikasi<br>
-                    <span class="hero-highlight">Gada Pratama</span>
-                </h1>
-                <p class="hero-description">
-                    Semua personel security kami telah melalui 6 tahap seleksi ketat dan memiliki sertifikasi Gada Pratama
-                    dari Kepolisian.
-                </p>
-                <div class="hero-actions">
-                    <a href="{{ route('services') }}" class="btn btn-accent">
-                        🔍 Lihat Layanan
-                    </a>
-                    <a href="{{ route('about') }}" class="btn btn-primary">
-                        📖 Tentang Kami
-                    </a>
+        @foreach($heroSlides as $index => $slide)
+            <div class="hero-slide {{ $index === 0 ? 'active' : '' }}"
+                style="background-image: url('{{ $slide->background_image_url ?? "data:image/svg+xml,%3Csvg..." }}'); background-color: {{ $slide->background_color }};">
+                <div class="hero-content">
+                    @if($slide->badge_icon || $slide->badge_text)
+                        <div class="hero-badge">
+                            @if($slide->badge_icon)<span>{{ $slide->badge_icon }}</span>@endif
+                            @if($slide->badge_text)<span>{{ $slide->badge_text }}</span>@endif
+                        </div>
+                    @endif
+                    <h1 class="hero-title">
+                        {{ $slide->title }}<br>
+                        @if($slide->highlight_text)
+                            <span class="hero-highlight">{{ $slide->highlight_text }}</span>
+                        @endif
+                    </h1>
+                    <p class="hero-description">{{ $slide->description }}</p>
+                    <div class="hero-actions">
+                        @if($slide->primary_button_text && $slide->primary_button_link)
+                            <a href="{{ $slide->primary_button_link }}" class="btn btn-accent">
+                                {{ $slide->primary_button_text }}
+                            </a>
+                        @endif
+                        @if($slide->secondary_button_text && $slide->secondary_button_link)
+                            <a href="{{ $slide->secondary_button_link }}" class="btn btn-primary">
+                                {{ $slide->secondary_button_text }}
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="hero-slide"
-            style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1920 1080%27%3E%3Crect fill=%27%23152238%27 width=%271920%27 height=%271080%27/%3E%3C/svg%3E');">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span>📊</span>
-                    <span>Multi-Regional Coverage & Support</span>
-                </div>
-                <h1 class="hero-title">
-                    Monitoring Digital<br>
-                    <span class="hero-highlight">Real-Time 24/7</span>
-                </h1>
-                <p class="hero-description">
-                    Sistem monitoring berbasis aplikasi dengan laporan digital real-time untuk transparansi dan efisiensi
-                    operasional.
-                </p>
-                <div class="hero-actions">
-                    <a href="{{ route('contact') }}" class="btn btn-accent">
-                        📞 Konsultasi Gratis
-                    </a>
-                    <a href="{{ route('portfolio') }}" class="btn btn-primary">
-                        🏆 Lihat Portfolio
-                    </a>
-                </div>
-            </div>
-        </div>
+        @endforeach
 
         <div class="slider-nav">
-            <div class="slider-dot active" data-slide="0"></div>
-            <div class="slider-dot" data-slide="1"></div>
-            <div class="slider-dot" data-slide="2"></div>
+            @foreach($heroSlides as $index => $slide)
+                <div class="slider-dot {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}"></div>
+            @endforeach
         </div>
     </section>
 
     <!-- Stats Section -->
     <section class="stats-section">
         <div class="stats-container">
-            <div class="stat-item">
-                <div class="stat-icon">👮</div>
-                <span class="stat-number" data-target="500">0</span>
-                <div class="stat-label">Personel Terlatih</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">🤝</div>
-                <span class="stat-number" data-target="200">0</span>
-                <div class="stat-label">Klien Aktif</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">📅</div>
-                <span class="stat-number" data-target="8">0</span>
-                <div class="stat-label">Tahun Pengalaman</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">🏆</div>
-                <span class="stat-number" data-target="15">0</span>
-                <div class="stat-label">Sertifikasi</div>
-            </div>
+            @foreach($stats as $stat)
+                <div class="stat-item">
+                    <div class="stat-icon">{{ $stat->icon }}</div>
+                    <span class="stat-number" data-target="{{ $stat->number }}">0</span>
+                    <div class="stat-label">{{ $stat->label }}</div>
+                </div>
+            @endforeach
         </div>
     </section>
 
@@ -769,58 +711,14 @@
             </p>
         </div>
         <div class="services-grid">
-            <div class="service-card">
-                <div class="service-icon">🛡️</div>
-                <h3 class="service-title">Security Guard</h3>
-                <p class="service-description">
-                    Personel security bersertifikat Gada Pratama dengan pelatihan 6 tahap seleksi untuk menjaga keamanan
-                    aset dan lingkungan bisnis Anda.
-                </p>
-                <a href="#" class="service-link">Selengkapnya →</a>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">🧹</div>
-                <h3 class="service-title">Cleaning Service</h3>
-                <p class="service-description">
-                    Layanan kebersihan profesional dengan peralatan modern dan metode yang efektif untuk menjaga lingkungan
-                    kerja tetap bersih dan nyaman.
-                </p>
-                <a href="#" class="service-link">Selengkapnya →</a>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">🚗</div>
-                <h3 class="service-title">Driver Service</h3>
-                <p class="service-description">
-                    Driver profesional dengan SIM yang valid dan pengalaman mengemudi untuk mendukung mobilitas operasional
-                    perusahaan Anda.
-                </p>
-                <a href="#" class="service-link">Selengkapnya →</a>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">🗺️</div>
-                <h3 class="service-title">Patrol & Monitoring</h3>
-                <p class="service-description">
-                    Sistem patroli dengan monitoring digital 24/7 dan laporan real-time untuk pengawasan yang lebih efektif
-                    dan terukur.
-                </p>
-                <a href="#" class="service-link">Selengkapnya →</a>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">📹</div>
-                <h3 class="service-title">CCTV & Security System</h3>
-                <p class="service-description">
-                    Instalasi dan pemeliharaan sistem CCTV serta security system terintegrasi untuk perlindungan maksimal.
-                </p>
-                <a href="#" class="service-link">Selengkapnya →</a>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">💼</div>
-                <h3 class="service-title">Security Consulting</h3>
-                <p class="service-description">
-                    Konsultasi dan perencanaan sistem keamanan sesuai analisis risiko dan kebutuhan spesifik bisnis Anda.
-                </p>
-                <a href="#" class="service-link">Selengkapnya →</a>
-            </div>
+            @foreach($services as $service)
+                <div class="service-card">
+                    <div class="service-icon">{{ $service->icon }}</div>
+                    <h3 class="service-title">{{ $service->title }}</h3>
+                    <p class="service-description">{{ $service->description }}</p>
+                    <a href="{{ route('services.show', $service->slug) }}" class="service-link">Selengkapnya →</a>
+                </div>
+            @endforeach
         </div>
     </section>
 
@@ -829,18 +727,15 @@
         <div class="clients-container">
             <div class="clients-title">Dipercaya Oleh Perusahaan Terkemuka</div>
             <div class="clients-grid">
-                <div class="client-logo">CLIENT 1</div>
-                <div class="client-logo">CLIENT 2</div>
-                <div class="client-logo">CLIENT 3</div>
-                <div class="client-logo">CLIENT 4</div>
-                <div class="client-logo">CLIENT 5</div>
-                <div class="client-logo">CLIENT 6</div>
-                <div class="client-logo">CLIENT 7</div>
-                <div class="client-logo">CLIENT 8</div>
-                <div class="client-logo">CLIENT 9</div>
-                <div class="client-logo">CLIENT 10</div>
-                <div class="client-logo">CLIENT 11</div>
-                <div class="client-logo">CLIENT 12</div>
+                @foreach($clients as $client)
+                    <div class="client-logo">
+                        @if($client->logo_url)
+                            <img src="{{ $client->logo_url }}" alt="{{ $client->name }}">
+                        @else
+                            {{ $client->name }}
+                        @endif
+                    </div>
+                @endforeach
             </div>
         </div>
     </section>
@@ -864,38 +759,15 @@
                     internasional dan personel berkualitas.
                 </p>
                 <div class="why-features">
-                    <div class="why-feature">
-                        <div class="why-feature-icon">📜</div>
-                        <div class="why-feature-content">
-                            <h4>Legalitas Lengkap</h4>
-                            <p>Memiliki seluruh izin operasional dari Kepolisian (SIO), sertifikasi ISO 9001, K3, dan
-                                Lingkungan serta terdaftar di ABUJAPI.</p>
+                    @foreach($whyFeatures as $feature)
+                        <div class="why-feature">
+                            <div class="why-feature-icon">{{ $feature->icon }}</div>
+                            <div class="why-feature-content">
+                                <h4>{{ $feature->title }}</h4>
+                                <p>{{ $feature->description }}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="why-feature">
-                        <div class="why-feature-icon">🎓</div>
-                        <div class="why-feature-content">
-                            <h4>Personel Tersertifikasi</h4>
-                            <p>Semua personel security memiliki sertifikat Gada Pratama dan telah melalui 6 tahap seleksi
-                                ketat dengan pelatihan intensif.</p>
-                        </div>
-                    </div>
-                    <div class="why-feature">
-                        <div class="why-feature-icon">📱</div>
-                        <div class="why-feature-content">
-                            <h4>Monitoring 24/7</h4>
-                            <p>Sistem monitoring digital dengan aplikasi Turjawali Patrol Online dan MCC untuk transparansi
-                                dan laporan real-time.</p>
-                        </div>
-                    </div>
-                    <div class="why-feature">
-                        <div class="why-feature-icon">⚡</div>
-                        <div class="why-feature-content">
-                            <h4>Quick Response Team</h4>
-                            <p>Tim tanggap darurat yang siap 24/7 untuk menangani situasi emergency dengan cepat dan
-                                profesional.</p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
